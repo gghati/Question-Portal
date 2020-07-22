@@ -5,7 +5,22 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/api/course', require('./course_app/routes'))
+// CORS settings
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested, Content-Type, Accept, Authorization"
+    );
+    if(req.method === "OPTIONS") {
+        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+        return res.status(200).json({});
+    }
+    next();
+})
+
+// main Routes
+app.use('/', require('./main-app/routes'));
 
 // set a static folder
 app.use(express.static(path.join(__dirname, 'public')))

@@ -1,5 +1,11 @@
 const Joi = require('joi');
 const data = require('../json-data');
+const mysqlConnection = require('../main-app/database')
+
+// parameters and Query parameters
+// app.get('/api/:year/:month?test=gaurav', (req, res) => {
+//     res.send(`year : ${req.params.year}, month: ${req.params.month}, ${req.query.test}`);
+// });
 
 show_all = (req, res) => {
     res.send(data);
