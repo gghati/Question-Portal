@@ -1,15 +1,18 @@
 const members = [
     {
         "id": 1,
-        "name": "Gaurav",
+        "username": "gg",
+        "password": "1234"
     },
     {
         "id": 2,
-        "name": "Gaurav",
+        "username": "gauravghati",
+        "password": "12345"
     },
     {
         "id": 3,
-        "name": "Gaurav",
+        "username": "Gaurav",
+        "password": "123456"
     },
 ];
 

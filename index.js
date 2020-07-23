@@ -5,6 +5,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Set EJS engine
+app.set('view engine', 'ejs')
+
 // CORS settings
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
