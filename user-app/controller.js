@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const Joi = require('joi');
-const users = require('../json-data');
+var users = require('../json-data');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -17,7 +17,7 @@ signup = async (req, res) => {
             const hashedpassword = await bcrypt.hash(req.body.password, 10);
             const user = {
                 id: users.length + 1,
-                name: req.body.username,
+                username: req.body.username,
                 password: hashedpassword
             }
             users.push(user);
@@ -38,7 +38,7 @@ login = async (req, res) => {
     
     // POST
     else if (req.method === 'POST') {
-        const user = users.find(user => user.name === req.body.username)
+        const user = users.find(user => user.username === req.body.username)
         if(user == null) {
             return res.send('User Not Found').status(400)
         }
@@ -56,9 +56,9 @@ login = async (req, res) => {
     }
 };
 
-profile = authenticateToken, (req, res) => {
-    res.json(data.filter(user => user.username === req.user.name));
-};
+profile = (req, res) => {
+    
+}
 
 leaderboard = (req, res)  => {
 
@@ -69,7 +69,8 @@ que_submit = (req, res) => {
 };
 
 edit_que = (req, res) => {
-
+    res.json(users.find(user => user.username === req.user.username));
+    console.log(req.user.username);
 };
 
 user_ques = (red, res) => {
@@ -82,13 +83,12 @@ authenticateToken = (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1]
     if(token == null) return res.status(401).send();
     
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, () => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) return res.sendStatus(403);
         req.user = user;
         next()
     });
-}
-
+};
 
 module.exports = {
     login,
@@ -97,5 +97,6 @@ module.exports = {
     leaderboard,
     que_submit,
     user_ques,
-    edit_que
+    edit_que,
+    authenticateToken
 };
