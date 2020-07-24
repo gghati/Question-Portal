@@ -5,13 +5,13 @@ const controller = require('./controller')
 // GET REQUEST
 router.get('/', controller.signup);
 router.get('/login', controller.login);
-router.get('/:username', controller.profile);
-router.get('/leaderboard', controller.leaderboard);
+router.get('/leaderboard', controller.authenticateToken, controller.leaderboard);
+router.get('/:username', controller.authenticateToken, controller.profile);
 router.get('/:username/submit', controller.authenticateToken, controller.que_submit);
 router.get('/:username/questions', controller.authenticateToken, controller.user_ques);
 router.get('/:username/:que', controller.authenticateToken, controller.edit_que);
 
-// PUSH REQUEST
+// POST REQUEST
 router.post('/', controller.signup);
 router.post('/login', controller.login);
 router.post('/:username/submit', controller.authenticateToken, controller.que_submit);
