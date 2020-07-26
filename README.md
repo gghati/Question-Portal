@@ -1,8 +1,4 @@
 # Question-Portal
-Basic NodeJS structure for backend (Similar structure as Django)
+NodeJS app for accepting the questions from the SEs, REST-API structure
 
-### Master Branch
-MVC structure - JWT, CORS setting, authentications, EJS file, public file
-
-### node-structure branch
-REST APIs structure
+JWT, CORS, authentications, permissions, REST APIs, mysql, admin system

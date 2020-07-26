@@ -1,24 +1,32 @@
-const members = [
+const ROLE = {
+    ADMIN: 'admin',
+    BASIC: 'basic'
+}
+
+const users = [
     {
         "id": 1,
         "username": "gg",
         "password": "1234",
         "fullname": "Gaurav Ghati",
-        "numberQue": 5
+        "numberQue": 5,
+        "role": ROLE.BASIC
     },
     {
         "id": 2,
         "username": "gauravghati",
         "password": "12345",
         "fullname": "Gaurav Ghati",
-        "numberQue": 2
+        "numberQue": 2,
+        "role": ROLE.ADMIN
     },
     {
         "id": 3,
         "username": "Gaurav",
         "password": "123456",
         "fullname": "Gaurav Ghati",
-        "numberQue": 8
+        "numberQue": 8,
+        "role": ROLE.BASIC
     },
 ];
 
@@ -56,6 +64,7 @@ const questions = [
 ]
 
 module.exports = {
-    members,
+    ROLE,
+    users,
     questions
 }
