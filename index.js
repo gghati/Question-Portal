@@ -1,5 +1,6 @@
 const express = require('express');
-const path = require('path')
+const path = require('path');
+const database = require('./main-app/database');
 
 const app = express();
 app.use(express.json());
@@ -24,9 +25,6 @@ app.use((req, res, next) => {
 
 // main Routes
 app.use('/', require('./main-app/routes'));
-
-// set a static folder
-app.use(express.static(path.join(__dirname, 'public')))
 
 // env value PORT
 const PORT = process.env.PORT || 5000;

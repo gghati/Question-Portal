@@ -27,7 +27,7 @@ const users = [
         "fullname": "Gaurav Ghati",
         "numberQue": 8,
         "role": ROLE.BASIC
-    },
+    }
 ];
 
 const questions = [
