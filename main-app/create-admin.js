@@ -1,24 +1,23 @@
-const { query } = require('./database');
+// NOT WORKING FOR NOW
+
 const bcrypt = require('bcrypt');
+const { User } = require('../user-app/model');
 
-const USERNAME = 'komalghati'
-const PASSWORD = '4321'
+const USERNAME = 'gauravghati'
+const PASSWORD = '1234'
 
-data = {
-    username: USERNAME,
-    password: '',
-    role: 'admin'
+async function save_value(){
+    try{
+        const end_user = new User({
+            username: USERNAME,
+            password: await (bcrypt.hash(PASSWORD, 10)),
+            numberQue: 0,
+            role: 'admin'
+        });
+        const waiteduser = await end_user.save();
+    } catch (err) {
+        console.log('error is: ' + err);
+    }
 }
 
-async function changeToHash(password) {
-    return await (bcrypt.hash(password, 10));
-}
-
-changeToHash(PASSWORD).then((pass) => {
-    data.password = pass;
-}).catch((err) => {
-    console.log('ERROR occur: ' + err);
-})
-
-console.log(data.password);
-query("insert_user", data);
+save_value();

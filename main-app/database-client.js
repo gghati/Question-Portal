@@ -1,3 +1,5 @@
+// NOT WORKING FOR NOW
+
 require('dotenv').config();
 
 const { MongoClient } = require('mongodb');
@@ -6,30 +8,21 @@ const mongo_user = process.env.MONGODB_USER;
 const mongo_pass = process.env.MONGODB_PASSWORD;
 const url = `mongodb+srv://${mongo_user}:${mongo_pass}@pisbdata.pbz9k.mongodb.net/<dbname>?retryWrites=true&w=majority`;
 
-var BASIC_USERS = new Array();
-var ALL_USERS = new Array();
-
 query = (message, data=null) => {
     try {
         MongoClient.connect(url, (err, client) => {
-            if (err) throw err;
-            console.log("Connected correctly to server");
-        
+            if (err) throw (err);
+            console.log("Connected correctly to database server");
             const db = client.db('pisbdata');
+
             if (message==='insert_user')  insert_user(db, data);
-
-            if (message==='get_users') {
-            }
-
             if (message==='update_user') update_user(db, data);
-            if (message==='delete_user')   return delete_user(db);
-            if (message==='get_basic_users')  return get_basic_users(db)
+            if (message==='delete_user') delete_user(db);
     
-            else if (message==='insert_que')   return que_user(db, data);
-            else if (message==='delete_que')   return delete_user(db, data);
-            else if (message==='update_que')   return update_que(db, data);
-            else if (message==='get_user_ques') return get_user_ques(db, data);
-            
+            else if (message==='insert_que') que_user(db, data);
+            else if (message==='delete_que') delete_user(db, data);
+            else if (message==='update_que') update_que(db, data);
+
             client.close();
         });
     } catch (err) {
@@ -61,7 +54,23 @@ function delete_user(db, data){
     });
 }
 
-// get basic users
-module.exports = {
-    query,
-};
+// Get all users
+function get_users(db, data){
+    db.collection('users').find().toArray().then((result)=>{
+        console.log(result);
+    });
+}
+
+// Get basic users
+function get_basic_users(db, data){
+    db.collection('users').find().toArray().then((result)=>{
+        console.log(result);
+    });
+}
+
+// Get basic users
+function get_users(db, data){
+    db.collection('users').find().toArray().then((result)=>{
+        console.log(result);
+    });
+}
