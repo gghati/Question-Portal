@@ -1,8 +1,13 @@
 require('dotenv').config();
 
-var { users, questions, ROLE } = require('../json-data')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { query } = require('../main-app/database');
+
+ROLE = {
+    ADMIN = 'admin',
+    BASIC = 'basic'
+}
 
 signup = async (req, res) => {
     // GET POST
@@ -17,7 +22,6 @@ signup = async (req, res) => {
         try {
             const hashedpassword = await bcrypt.hash(req.body.password, 10);
             const user = {
-                id: users.length + 1,
                 username: req.body.username.toLowerCase(),
                 password: hashedpassword,
                 fullname: req.body.fullname,
@@ -89,7 +93,6 @@ que_submit = (req, res) => {
 
     else if (req.method === 'POST') {
         question = {
-            unqid: questions.length + 1,
             queid: user.numberQue + 1,
             heading: req.body.heading,
             statement: req.body.statement,

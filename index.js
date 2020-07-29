@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const database = require('./main-app/database');
 
 const app = express();
 app.use(express.json());

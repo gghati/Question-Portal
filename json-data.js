@@ -1,8 +1,3 @@
-const ROLE = {
-    ADMIN: 'admin',
-    BASIC: 'basic'
-}
-
 const users = [
     {
         "id": 1,
@@ -64,7 +59,6 @@ const questions = [
 ]
 
 module.exports = {
-    ROLE,
     users,
     questions
 }
