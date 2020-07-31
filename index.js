@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // SET mongoDB with mongoose
-mongoose.connect(process.env.MONGODB_URL);
+const connection = mongoose.connect(process.env.MONGODB_URL);
 
 // Set EJS engine
 app.set('view engine', 'ejs')
@@ -33,3 +33,7 @@ app.use('/', require('./main-app/routes'));
 // env value PORT
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server stared on ${PORT}`));
+
+module.exports = {
+    connection
+};

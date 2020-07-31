@@ -92,8 +92,8 @@ leaderboard = async (req, res)  => {
     if(req.method === 'GET'){
         try {
             const users = await User.find()
-            users.sort((b, a) => {return a.numberQue - b.numberQue});
-            console.log(users);
+            users.sort((b, a) => {return a.currentQue - b.currentQue});
+            // console.log(users);
             res.status(200).json(users);
         } catch (err) {
             res.status(500).json({message: err});
@@ -101,70 +101,124 @@ leaderboard = async (req, res)  => {
     }
 }
 
-
 que_submit = async (req, res) => {
     // => /:username/submit
     try{
+        const user = await User.findOne({username: req.user.username})
         if (req.method === 'POST') {
             question = new Question({
-                queid: req.params_user.numberQue + 1,
+                queid: user.numberQue + 1,
                 heading: req.body.heading,
                 statement: req.body.statement,
                 opt1: req.body.opt1,
                 opt2: req.body.opt2,
                 opt3: req.body.opt3,
                 opt4: req.body.opt4,
-                user: req.user.username,
-                rightopt: req.body.rightopt
+                username: req.user.username,
+                rightopt: req.body.rightopt,
+                is_varified: 'no'
             });
-            req.user.numberQue += 1;
-            req.user.save()
-            const waited_que = await question.save();
+            user.numberQue += 1;
+            user.currentQue += 1;
+            await user.save();
+            await question.save();
             
-            res.status(201).json(waited_que);
+            res.status(201).json(question.toJSON());
         }
     } catch (err) {
         console.log(`Error ${err}`);
     }
 }; 
 
+// WORKING
 edit_que = async (req, res) => {
     // => /:username/:que
-    que = questions.filter(que => ((que.queid === req.params.que-1) && (que.user === req.user.username)))[0];
-    console.log(que);
-    if (user == null || que == null) return res.status(400).json({ message: 'que not exist!'});
-
-    // WORKING GET POST 
-    if (req.method === 'GET')
-        res.json(que).status(200);
-
-    else if (req.method === 'PUT') {
-        que.heading = req.body.heading;
-        que.statement = req.body.statement;
-        que.opt1 = req.body.opt1;
-        que.opt2 = req.body.opt2;
-        que.opt3 = req.body.opt3;
-        que.opt4 = req.body.opt4;
-        que.rightopt = req.body.rightopt;
-
-        res.json(que).status(200);
-    }
-
-    else if (req.method === 'DELETE') {
-        try {
-            const removed_que = await questions.slice(que.unqid - 1);
-            res.status(203);
-        } catch (err) {
-            res.status(500).json({message: err.message});
+    try {
+        if (req.params_user == null || req.params_que == null) return res.status(400).json({ message: 'que not exist!'});
+    
+        // WORKING GET POST 
+        if (req.method === 'GET')
+            res.json(req.params_que).status(200);
+    
+        else if (req.method === 'PUT') {
+            req.params_que.heading = req.body.heading;
+            req.params_que.statement = req.body.statement;
+            req.params_que.opt1 = req.body.opt1;
+            req.params_que.opt2 = req.body.opt2;
+            req.params_que.opt3 = req.body.opt3;
+            req.params_que.opt4 = req.body.opt4;
+            req.params_que.rightopt = req.body.rightopt;
+            
+            console.log(req.params_que);
+            await req.params_que.save();
+            res.json(req.params_que).status(200);
         }
+        else if (req.method === 'DELETE') {
+            await req.params_que.remove();
+            req.params_user.currentQue = req.params_user.currentQue - 1;
+            await req.params_user.save();
+            res.status(203).json({message: "deleted Successfully"});
+        }
+    } catch (err) {
+        res.json({message: `INternal Error ${err}`}).status();
     }
 };
 
-
-user_ques = (req, res) => {
+user_ques = async (req, res) => {
     // => /:username/questions
-    user_questions = questions.filter(que => que.user === req.user.username);
+    try {
+        const user_questions = await Question.find({username: req.user.username});
+        res.status(200).json(user_questions);
+    } catch (err) {
+        res.status(500).json({message: `Internal error ${err}`});
+    }
     res.json(user_questions).status(200);
+};
+
+adminQue = async (req, res) => {
+    // => /admin/
+    try {
+        const user_questions = await Question.find();
+        res.status(200).json(user_questions);
+    } catch (err) {
+        res.status(500).json({message: `Internal error ${err}`});
+    }
+};
+
+rangeQue = async (req, res) => {
+    // => /admin/:lower/:upper
+    try{
+        const user_ques = await Question.find();
+        const range_user = new Array();
+        lower = parseInt(req.params.lower);
+        upper = parseInt(req.params.upper);
+        for(var i=lower; i<=upper; i++)
+            range_user.push(user_ques[i]);
+        res.status(200).json(range_user);
+    } catch (err) {
+        res.json({message: `Internal Errors: ${err}`}).status(200);
+    }
+};
+
+partQue = async (req, res) => {
+    // => /admin/:queid
+    try{
+        const all_ques = await Question.find();
+
+        if (req.method === 'GET'){
+            if(req.params.queid > 0 && req.params.queid <= all_ques.length)
+                res.status(200).json(all_ques[req.params.queid]);
+            else res.status(400).json({message: "Not in range"})
+        }
+        else if (req.method === 'POST'){
+            if (req.body.is_valid != null)
+                que = all_ques[req.params.queid];
+                que.is_varified = 'yes';
+                await que.save();
+        }
+    } catch (err) {
+        res.json({message: `Internal Errors: ${err}`}).status(500);
+    }
 };
 
 // MIDDLE WARES //
@@ -175,11 +229,12 @@ authToken = (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1]
     if(token == null) return res.status(401).json({message: 'invaild token'});
     
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async(err, user) => {
         if (err) {
-            if (req.method === 'GET') return res.redirect(301, '/login');
-            else if (req.method === 'POST') return res.redirect(307, '/login');
-        } 
+            res.status(400).json({message: err.message});
+            // if (req.method === 'GET') return res.redirect(301, '/login');
+            // else if (req.method === 'POST') return res.redirect(307, '/login');
+        }
         req.user = user;
         next();
     });
@@ -204,6 +259,12 @@ checkUserParams = async (req, res, next) => {
     try {
         const user = await User.findOne({username: req.params.username});
         if (user === null) return res.status(400).json({message: `user doesn't exist`});
+
+        if (req.params.que != null){
+            const que = await Question.findOne({username: req.params.username, queid: req.params.que});
+            if (que === null) return res.status(400).json({message: `Question doesn't exist`});
+            req.params_que = que;
+        }
         req.params_user = user;
     } catch (err) {
         res.status(500).json({message: `Internal error ${err}`});
@@ -211,8 +272,15 @@ checkUserParams = async (req, res, next) => {
     next();
 }
 
+onlyAdmin= (req, res, next) => {
+    if(req.user.role != ROLE.ADMIN){
+        res.status(403).json({ message: 'accessed not allowed!'});
+    }
+    next();
+}
+
 module.exports = {
-    login, signup, profile, leaderboard, que_submit, user_ques, edit_que, 
+    login, signup, profile, leaderboard, que_submit, user_ques, edit_que, adminQue, rangeQue, partQue,
     // MIDDLE WARES
-    authToken, private, allowAdmin, checkUserParams
+    authToken, private, allowAdmin, checkUserParams, onlyAdmin
 };
