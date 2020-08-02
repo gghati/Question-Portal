@@ -8,7 +8,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // SET mongoDB with mongoose
-const connection = mongoose.connect(process.env.MONGODB_URL);
+const connection = mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true }).catch((err) => {
+    console.log(err);
+});
 
 // Set EJS engine
 app.set('view engine', 'ejs')

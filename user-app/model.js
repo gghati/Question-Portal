@@ -21,7 +21,8 @@ const que_schema = mongoose.Schema({
     opt4: { type: String, require: true },
     username: { type: String, require: true },
     rightopt: { type: Number, require: true },
-    is_varified: { type: String, require: true }
+    is_varified: { type: String, require: true },
+    lang: { type: String, require: true}
 });
 
 User = mongoose.model('User', user_schema, 'users');
