@@ -90,9 +90,15 @@ leaderboard = async (req, res)  => {
     if(req.method === 'GET'){
         try {
             const users = await User.find()
-            users.sort((b, a) => {return a.currentQue - b.currentQue});
+            
+            var without_admin = new Array();
+            users.forEach(element => {
+                if (element.role === ROLE.BASIC)
+                    without_admin.push(element);
+            });
+            without_admin.sort((b, a) => {return a.currentQue - b.currentQue});
             // console.log(users);
-            res.status(200).json(users);
+            res.status(200).json(without_admin);
         } catch (err) {
             res.status(500).json({message: err});
         }
