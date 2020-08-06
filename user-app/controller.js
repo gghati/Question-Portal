@@ -24,7 +24,7 @@ signup = async (req, res) => {
     else if (req.method === 'POST') {
         try {
             const users = await User.find()
-            const user = users.find(user => user.username === req.body.username)
+            const user = users.find(user => user.username === req.body.username.toLowerCase())
             if(user != null) return res.json({message: 'username Already Taken'});
 
             var role = null;
@@ -215,10 +215,10 @@ partQue = async (req, res) => {
                 res.status(200).json(all_ques[req.params.queid]);
             else res.status(400).json({message: "Not in range"})
         }
-        else if (req.method === 'POST'){
-            if (req.body.is_valid != null) {
+        else if (req.method === 'PUT'){
+            if (req.body.is_varified != null) {
                 que = all_ques[req.params.queid];
-                que.is_varified = 'yes';
+                que.is_varified = req.body.is_varified;
                 await que.save();
             }
         }

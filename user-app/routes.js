@@ -6,7 +6,7 @@ const c = require('./controller')
 router.get('/admin', c.authToken, c.onlyAdmin, c.adminQue);
 router.get('/admin/:lower/:upper', c.authToken, c.onlyAdmin, c.rangeQue);
 router.get('/admin/:queid', c.authToken, c.onlyAdmin, c.partQue);
-router.post('/admin/:queid', c.authToken, c.onlyAdmin, c.partQue);
+router.put('/admin/:queid', c.authToken, c.onlyAdmin, c.partQue);
 
 // GET REQUEST
 router.get('/', c.signup);
